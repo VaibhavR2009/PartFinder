@@ -141,7 +141,7 @@ export default function App() {
         <span>+</span>
         <span className="footer-badge">SerpApi</span>
         <span>·</span>
-        <span>Kaggle AI Agents Capstone 2025</span>
+        <span>Kaggle AI Agents Capstone 2026</span>
       </footer>
     </div>
   );
