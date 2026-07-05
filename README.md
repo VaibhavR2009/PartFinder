@@ -74,22 +74,29 @@ graph TD
         T2["🔧 get_home_depot_product"]
         T3["🔧 search_amazon"]
         T4["🔧 get_amazon_product"]
+        T5["🔧 search_ebay"]
+        T6["🔧 get_ebay_product"]
     end
 
     SA -- "MCPToolset" --> T1
     VA -- "MCPToolset" --> T2
     VA -- "MCPToolset" --> T3
     VA -- "MCPToolset" --> T4
+    VA -- "MCPToolset" --> T5
+    VA -- "MCPToolset" --> T6
 
     subgraph "SerpApi"
         HD["🏠 Home Depot API\n(engine=home_depot\nengine=home_depot_product)"]
         AZ["📦 Amazon API\n(engine=amazon\nengine=amazon_product)"]
+        EB["🏷️ eBay API\n(engine=ebay\nengine=ebay_product)"]
     end
 
     T1 --> HD
     T2 --> HD
     T3 --> AZ
     T4 --> AZ
+    T5 --> EB
+    T6 --> EB
 ```
 
 ### Agent Responsibilities
