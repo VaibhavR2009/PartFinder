@@ -31,18 +31,20 @@ DEMO_MODE: bool = os.environ.get("DEMO_MODE", "false").lower() == "true"
 # we slice to this number to keep agent context small and
 # token cost bounded.
 #
-# Rationale for 2: In the worst case the orchestrator calls:
-#   search_home_depot × MAX_ITEMS (6) = 6 HD search calls
-#   get_home_depot_product × (6 × 2) = 12 HD product calls
-#   search_amazon × 6 fallback = 6 Amazon search calls
-#   get_amazon_product × (6 × 2) = 12 Amazon product calls
-#   Total: 36 SerpApi calls maximum — safe for free tier.
+# Rationale for 1: In the worst case the orchestrator calls:
+#   search_home_depot × MAX_ITEMS (4) = 4 HD search calls
+#   get_home_depot_product × (4 × 1) = 4 HD product calls
+#   search_amazon × 4 fallback = 4 Amazon search calls
+#   get_amazon_product × (4 × 1) = 4 Amazon product calls
+#   search_ebay × 4 fallback = 4 eBay search calls
+#   get_ebay_product × (4 × 1) = 4 eBay product calls
+#   Total: 24 SerpApi calls maximum — much safer for free tier.
 #
 # Raising MAX_RESULTS_PER_SEARCH increases candidate quality
 # but multiplies product-detail calls. Change here, not in
 # individual agent files.
 # ----------------------------------------------------------
-MAX_RESULTS_PER_SEARCH: int = int(os.environ.get("MAX_RESULTS_PER_SEARCH", "2"))
+MAX_RESULTS_PER_SEARCH: int = int(os.environ.get("MAX_RESULTS_PER_SEARCH", "1"))
 
 # ----------------------------------------------------------
 # HTTP request timeout (seconds)

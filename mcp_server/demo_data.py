@@ -292,3 +292,57 @@ def get_amazon_search_fixture(query: str, n: int) -> list[dict]:
 
 def get_amazon_product_fixture(asin: str) -> dict | None:
     return AMAZON_PRODUCT_FIXTURES.get(asin)
+
+
+# ---------------------------------------------------------------------------
+# eBay search fixture
+# ---------------------------------------------------------------------------
+EBAY_SEARCH_FIXTURES: dict[str, list[dict]] = {
+    "default": [
+        {
+            "product_id": "263176958865",
+            "title": "#10 Stainless Steel Deck Screws Square Drive Wood / Composite Decking All Sizes",
+            "price": 18.08,
+            "condition": "Brand New",
+            "link": "https://www.ebay.com/itm/263176958865",
+        },
+        {
+            "product_id": "224590302047",
+            "title": "Lot of 2 Vintage Brass Wood Screws Slot Head Pre-Owned",
+            "price": 8.50,
+            "condition": "Pre-Owned",
+            "link": "https://www.ebay.com/itm/224590302047",
+        },
+    ],
+}
+
+# ---------------------------------------------------------------------------
+# eBay product detail fixture
+# ---------------------------------------------------------------------------
+EBAY_PRODUCT_FIXTURES: dict[str, dict] = {
+    "263176958865": {
+        "item_id": "263176958865",
+        "title": "#10 Stainless Steel Deck Screws Square Drive Wood / Composite Decking All Sizes",
+        "price": 18.08,
+        "condition": "Brand New",
+        "fulfillment": "Free delivery in 3 days",
+        "link": "https://www.ebay.com/itm/263176958865",
+    },
+    "224590302047": {
+        "item_id": "224590302047",
+        "title": "Lot of 2 Vintage Brass Wood Screws Slot Head Pre-Owned",
+        "price": 8.50,
+        "condition": "Pre-Owned",
+        "fulfillment": "Ships in 5-7 days",
+        "link": "https://www.ebay.com/itm/224590302047",
+    }
+}
+
+
+def get_ebay_search_fixture(query: str, n: int) -> list[dict]:
+    """Return eBay search fixture, capped to n results."""
+    return EBAY_SEARCH_FIXTURES["default"][:n]
+
+
+def get_ebay_product_fixture(product_id: str) -> dict | None:
+    return EBAY_PRODUCT_FIXTURES.get(product_id)

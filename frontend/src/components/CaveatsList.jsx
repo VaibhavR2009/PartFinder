@@ -65,7 +65,7 @@ export default function CaveatsList({ caveats = [], unresolvedItems = [] }) {
             <span>Items Not Found</span>
           </div>
           <p className="unresolved-desc">
-            The following items could not be matched to a product on Home Depot or Amazon.
+            The following items could not be matched to a product on Home Depot, Amazon, or eBay.
             You may need to source these locally or adjust the project specifications.
           </p>
           <ul className="unresolved-list">

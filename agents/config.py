@@ -51,20 +51,23 @@ MCP_SERVER_URL: str = os.environ.get(
 # deliberately conservative for the free tier.
 #
 # Worst-case call count at these defaults:
-#   HD search calls:    MAX_ITEMS × 1           = 6
-#   HD product calls:   MAX_ITEMS × MAX_CANDS   = 12
-#   Amazon search calls (fallback worst case):  = 6
-#   Amazon product calls (fallback worst case): = 12
-#   Total SerpApi calls (worst case):           = 36
+#   HD search calls:    MAX_ITEMS (4) × 1       = 4
+#   HD product calls:   MAX_ITEMS (4) × MAX_CANDS (1) = 4
+#   Amazon search calls (fallback worst case):  = 4
+#   Amazon product calls (fallback worst case): = 4
+#   eBay search calls (fallback worst case):    = 4
+#   eBay product calls (fallback worst case):   = 4
+#   Total SerpApi calls (worst case):           = 24
 #
 # Gemini calls:
 #   Feasibility: 1, Sourcing: 1, Verification: 1, Compiler: 1 = 4
 #
-# Both ceilings are well within free-tier daily limits.
+# Note: 24 calls is a much safer ceiling for the free tier.
+# It is highly recommended to use DEMO_MODE for iterative testing.
 # To raise the ceiling for a paid tier, set the env vars.
 # ------------------------------------------------------------------
-MAX_ITEMS_PER_PROJECT: int = int(os.environ.get("MAX_ITEMS", "6"))
-MAX_CANDIDATES_PER_ITEM: int = int(os.environ.get("MAX_CANDIDATES", "2"))
+MAX_ITEMS_PER_PROJECT: int = int(os.environ.get("MAX_ITEMS", "4"))
+MAX_CANDIDATES_PER_ITEM: int = int(os.environ.get("MAX_CANDIDATES", "1"))
 
 # ------------------------------------------------------------------
 # Retry / rate-limit configuration (for 429 responses)

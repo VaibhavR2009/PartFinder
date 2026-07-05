@@ -4,36 +4,16 @@ import './BuildGuidePrompt.css';
 export default function BuildGuidePrompt({ inputData, resultData }) {
   const [copied, setCopied] = useState(false);
 
-  if (!inputData || !resultData || !resultData.parts) return null;
+  const partsList = resultData.parts || resultData.parts_list;
+  if (!inputData || !resultData || !partsList) return null;
 
-  // Build the prompt text
-  const partsListText = resultData.parts.map(p => 
-    `- ${p.qty}x ${p.product_title || p.product_name || p.item_name} (from ${p.source})`
-  ).join('\n');
-  
-  const toolsText = inputData.tools_on_hand?.length 
-    ? inputData.tools_on_hand.join(', ') 
-    : 'None specified';
-
-  const caveatsText = resultData.caveats?.length 
-    ? '\nCaveats:\n' + resultData.caveats.map(c => `- ${c}`).join('\n')
-    : '';
-
-  const promptText = `I want to build a DIY project based on the following details. Please act as an expert DIY builder and guide me step-by-step through the construction process.
+  // Use the pre-generated prompt from the Compiler Agent, or a fallback if not present
+  const promptText = resultData.build_guide_prompt || `I want to build a DIY project based on the following details. Please act as an expert DIY builder and guide me step-by-step through the construction process.
 
 Project Description:
 ${inputData.description}
 
-My Skill Level: ${inputData.skill_level}
-Tools I have on hand: ${toolsText}
-
-I have already sourced the following parts:
-${partsListText}${caveatsText}
-
-Please provide:
-1. A logical step-by-step build guide.
-2. Any safety tips or precautions I should take.
-3. Recommendations for any additional tools or materials I might have missed.`;
+Please provide a logical step-by-step build guide, safety tips, and recommendations.`;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(promptText);

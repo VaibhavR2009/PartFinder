@@ -182,10 +182,16 @@ For each item in sourced_items:
      3. Apply the same judgment — PASS or FAIL.
      4. Stop at the first PASS.
 
-  C) If BOTH Home Depot and Amazon fail to provide an exact match:
-     1. If you saw at least one candidate across either source, select the closest match and mark status as "closest_match".
-     2. In the verification_note, you MUST include: (a) what was requested/required, (b) what was substituted and why it's the closest available, (c) price difference vs. estimated cost, and (d) which source it came from.
-     3. If NO candidates were returned at all from either source, mark as "unresolved".
+  C) If ALL Amazon candidates FAIL (or there were none):
+     1. Call search_ebay with the functional_spec as query.
+     2. For each eBay result, call get_ebay_product with its product_id.
+     3. Apply the same judgment — PASS or FAIL. Note the item's condition (New vs Pre-Owned/Used).
+     4. Stop at the first PASS.
+
+  D) If ALL sources fail to provide an exact match:
+     1. If you saw at least one candidate across any source, select the closest match and mark status as "closest_match".
+     2. In the reasoning, you MUST include: (a) what was requested/required, (b) what was substituted and why it's the closest available, (c) price difference vs. estimated cost, and (d) which source it came from.
+     3. If NO candidates were returned at all from any source, mark as "unresolved".
 
 == OUTPUT FORMAT ==
 Return ONLY valid JSON. Schema:
@@ -199,17 +205,19 @@ Return ONLY valid JSON. Schema:
       "unit": "piece",
       "status": "resolved" | "closest_match" | "unresolved",
       "chosen_product": {{
-        "source": "home_depot" | "amazon",
+        "source": "home_depot" | "amazon" | "ebay",
         "product_id": "..." | null,
         "asin": "..." | null,
         "title": "...",
         "price": 12.99,
         "availability": "In stock / ships in X days",
+        "condition": "Brand New" | "Pre-Owned" | null,
         "link": "https://..."
       }} | null,
-      "verification_note": "Why this product was chosen or why none qualified (for closest_match include the 4 required points)",
+      "reasoning": "Explain why this product satisfies the requirement. If eBay, explicitly note its condition. (For closest_match include the 4 required points)",
       "hd_attempted": true | false,
-      "amazon_attempted": true | false
+      "amazon_attempted": true | false,
+      "ebay_attempted": true | false
     }}
   ]
 }}
@@ -245,12 +253,19 @@ The conversation history contains all prior agent outputs including:
      over_budget = budget_delta > 0
 3. Write a caveats list covering:
    - Unresolved items (items with no qualifying product found)
-   - Closest matches (summarize the verification_note for any item marked closest_match)
+   - Closest matches (summarize the reasoning for any item marked closest_match)
    - Out-of-stock-locally items or items requiring shipping
-   - Any substitutions made (Home Depot → Amazon fallback)
+   - Any substitutions made (Home Depot → Amazon/eBay fallback)
+   - If an eBay item was chosen and is Used/Pre-Owned, explicitly flag this as a caveat.
    - Safety, permit, or code reminders from the Feasibility Agent
    - Note that tax/shipping estimate is approximate
 4. Flag any item where availability is poor (long ship time, low stock).
+5. Generate a `build_guide_prompt`. This is a fully self-contained prompt, formatted for the user to copy and paste directly into another LLM to get a build guide. Do NOT write the build guide itself.
+   - Start with: "You are an expert DIY project assistant. Write a clear, step-by-step build guide for the following project."
+   - Include the user's original project description, budget, skill level, and tools on hand (from Feasibility input).
+   - List the final parts: item name, quantity, chosen product title, and its `reasoning`.
+   - List any caveats or substitutions from your caveats list so the target LLM accounts for them.
+   - End with: "Please provide a step-by-step guide appropriate to the stated skill level, including relevant safety notes."
 
 == OUTPUT FORMAT ==
 Return ONLY valid JSON. Schema:
@@ -265,10 +280,11 @@ Return ONLY valid JSON. Schema:
       "product_title": "...",
       "price_per_unit": 12.99,
       "total_price": 12.99,
-      "source": "home_depot" | "amazon" | "unresolved",
+      "source": "home_depot" | "amazon" | "ebay" | "unresolved",
       "status": "exact" | "closest_match" | "unresolved",
       "link": "https://..." | null,
       "availability": "...",
+      "reasoning": "...",
       "caveat": "..." | null
     }
   ],
@@ -279,6 +295,7 @@ Return ONLY valid JSON. Schema:
   "budget_delta": 0.00,
   "over_budget": false,
   "caveats": ["..."],
-  "unresolved_items": ["item_name1", "item_name2"]
+  "unresolved_items": ["item_name1", "item_name2"],
+  "build_guide_prompt": "You are an expert DIY project assistant..."
 }
 """

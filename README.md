@@ -20,6 +20,18 @@ PartFinder answers all three before any screws are purchased.
 
 ---
 
+## The Solution
+
+PartFinder acts as your personal DIY concierge by taking a simple, natural language description of what you want to build and automatically:
+1. **Validating Feasibility:** Checking if your idea is structurally sound and within your budget.
+2. **Translating Requirements:** Breaking down vague ideas into a specific list of required materials and tools.
+3. **Live Sourcing:** Querying real-time retailer APIs (Home Depot and Amazon) to find the exact parts needed based on your ZIP code.
+4. **Verifying Specs:** Cross-referencing the technical specifications of the found products to ensure they fit your project's constraints perfectly.
+5. **Budget Compilation:** Presenting a final, itemized list of verified parts with caveats and alternatives if needed.
+6. **Build Guide Generation:** Generating a fully-customized, copy-pasteable prompt incorporating your exact sourced parts and caveats, ready to be fed into any LLM for step-by-step construction instructions.
+
+---
+
 ## Why Agents?
 
 This problem has a natural **sequential dependency structure** that maps cleanly to a multi-agent pipeline:
@@ -87,15 +99,13 @@ graph TD
 | **Feasibility** | None (pure reasoning) | Decide if project is achievable; list required items with functional specs |
 | **Sourcing** | `search_home_depot` | Find candidate products from Home Depot for each required item |
 | **Verification** | `get_home_depot_product`, `search_amazon`, `get_amazon_product` | Check specs vs. requirements; Amazon fallback if HD fails |
-| **Compiler** | None | Assemble final priced list, compute budget delta, write caveats |
+| **Compiler** | None | Assemble final priced list, compute budget delta, write caveats, and generate the copy-pasteable build guide prompt |
 
 ### Why This Boundary Placement?
 
 - **Feasibility has no tools** by design — this guarantees it costs zero SerpApi quota. A project that's obviously infeasible (rewiring a house for $50) is rejected before any paid API call.
 - **Sourcing and Verification are separate** — Sourcing does a broad sweep; Verification applies detailed judgment. Merging them into one agent produces unreliable tool-call sequences.
-- **Amazon is a fallback, not primary** — Home Depot has structured, specialist hardware data. Amazon is noisier (third-party sellers, inconsistent specs). The agent tries HD first, and only falls back to Amazon per-item when needed.
-
----
+- **Amazon and eBay are fallbacks, not primary** — Home Depot has structured, specialist hardware data. Amazon and eBay are noisier (third-party sellers, variable conditions). The agent tries HD first, and only falls back per-item when needed.
 
 ## Capstone Criteria Mapping
 
@@ -288,7 +298,7 @@ gcloud run deploy partfinder \
 | **Budget validation** | Must be a positive number ≤ $1,000,000 |
 | **ZIP code validation** | Regex `\d{5}(-\d{4})?` before forwarding to SerpApi `delivery_zip` |
 | **Description length cap** | 2,000 characters max; prevents prompt-injection via enormous inputs |
-| **API call cap** | Documented in `agents/config.py`: max 36 SerpApi calls per run (6 items × 2 candidates × 3 calls) |
+| **API call cap** | Documented in `agents/config.py`: max 24 SerpApi calls per run (4 items × 1 candidate × 6 calls max) |
 | **No data persistence** | Session state lives in memory during a single request only; no user data written to disk |
 | **Rate-limit retry** | Exponential backoff with jitter on 429 from both Gemini and SerpApi (see `agents/retry.py`) |
 
@@ -302,7 +312,7 @@ PartFinder is designed to run within Gemini free-tier limits:
 |---|---|---|
 | Gemini RPM | 15 req/min | 4 calls (one per agent) |
 | Gemini RPD | 1,500 req/day | 4 calls |
-| SerpApi (free) | 100 searches/month | ≤36 calls (worst case) |
+| SerpApi (free) | 100 searches/month | ≤24 calls (worst case) |
 
 Exponential backoff handles temporary 429s automatically.
 

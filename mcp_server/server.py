@@ -43,6 +43,8 @@ from mcp_server.demo_data import (
     get_hd_product_fixture,
     get_amazon_search_fixture,
     get_amazon_product_fixture,
+    get_ebay_search_fixture,
+    get_ebay_product_fixture,
 )
 
 logger = logging.getLogger(__name__)
@@ -126,6 +128,29 @@ def _extract_amazon_products(raw: dict, n: int) -> list[dict]:
             "reviews": p.get("reviews", None),
             "link": p.get("link", ""),
             "prime": p.get("prime", False),
+        })
+    return results
+
+
+def _extract_ebay_products(raw: dict, n: int) -> list[dict]:
+    """Extract minimal fields from an eBay search response."""
+    products = raw.get("organic_results", [])
+    results = []
+    for p in products[:n]:
+        price_val = p.get("price")
+        if isinstance(price_val, dict):
+            price_from = price_val.get("from", {})
+            if isinstance(price_from, dict):
+                price_val = price_from.get("raw") or price_from.get("extracted")
+            else:
+                price_val = p.get("price", {}).get("raw", None)
+                
+        results.append({
+            "product_id": p.get("item_id") or p.get("product_id", ""),
+            "title": p.get("title", ""),
+            "price": price_val,
+            "condition": p.get("condition", "Unknown"),
+            "link": p.get("link", ""),
         })
     return results
 
@@ -315,6 +340,86 @@ async def get_amazon_product(asin: str) -> dict:
         }
 
     params: dict = {"engine": "amazon_product", "asin": asin, "amazon_domain": "amazon.com"}
+    raw = await _serpapi_get(params)
+    return {"product": raw.get("product_results", raw), "demo_mode": False}
+
+
+# ==================================================================
+# Tool: search_ebay
+# ==================================================================
+
+@mcp.tool
+async def search_ebay(
+    query: str,
+    price_min: Optional[float] = None,
+    price_max: Optional[float] = None,
+) -> dict:
+    """
+    Search the eBay product catalog.
+
+    Use this ONLY as a fallback when no Amazon product satisfies
+    the project's requirements. eBay has variable conditions (used/new)
+    and fulfillment, so it is the last resort.
+
+    Returns a list of matching products with item_id, title, price, condition, and link.
+    Use the product_id values with get_ebay_product for full details.
+
+    Args:
+        query:     Search query (e.g. "exterior galvanized corner bracket").
+        price_min: Optional minimum price filter (USD).
+        price_max: Optional maximum price filter (USD).
+    """
+    query = _trim(query)
+    logger.info("search_ebay: query=%r demo=%s", query, DEMO_MODE)
+
+    if DEMO_MODE:
+        return {"products": get_ebay_search_fixture(query, MAX_RESULTS_PER_SEARCH), "demo_mode": True}
+
+    params: dict = {
+        "engine": "ebay",
+        "_nkw": query,
+        "buying_format": "BIN", # Buy It Now only to avoid auctions
+    }
+    if price_min is not None:
+        params["_udlo"] = int(price_min)
+    if price_max is not None:
+        params["_udhi"] = int(price_max)
+
+    raw = await _serpapi_get(params)
+    return {"products": _extract_ebay_products(raw, MAX_RESULTS_PER_SEARCH), "demo_mode": False}
+
+
+# ==================================================================
+# Tool: get_ebay_product
+# ==================================================================
+
+@mcp.tool
+async def get_ebay_product(product_id: str) -> dict:
+    """
+    Retrieve full product details for an eBay product by its item_id.
+
+    Args:
+        product_id: The item_id from an eBay search result.
+    """
+    product_id = _trim(product_id, 20)
+    logger.info("get_ebay_product: id=%s demo=%s", product_id, DEMO_MODE)
+
+    if DEMO_MODE:
+        fixture = get_ebay_product_fixture(product_id)
+        if fixture:
+            return {"product": fixture, "demo_mode": True}
+        return {
+            "product": {
+                "item_id": product_id,
+                "title": f"[Demo] eBay Product {product_id}",
+                "price": 14.99,
+                "condition": "Brand New",
+                "fulfillment": "Ships in 3-5 days",
+            },
+            "demo_mode": True,
+        }
+
+    params: dict = {"engine": "ebay_product", "item_id": product_id}
     raw = await _serpapi_get(params)
     return {"product": raw.get("product_results", raw), "demo_mode": False}
 

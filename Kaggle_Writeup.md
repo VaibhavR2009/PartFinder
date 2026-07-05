@@ -34,8 +34,7 @@ The core of PartFinder is built using the **Google Agent Development Kit (ADK)**
    - **Role:** The critical "quality control" layer. It analyzes the candidates provided by the Sourcing Agent and verifies them against the project's strict specifications.
    - **Agentic Pattern:** *Reflection & Routing*. If Home Depot's candidates are inadequate (e.g., specialized electronics components), the Verification Agent dynamically falls back to query Amazon. If an exact match cannot be found on either platform, it intelligently selects a "closest match" and logs the discrepancy.
 
-4. **Compiler Agent (Aggregation)**
-   - **Role:** Assembles the verified products into a clean, itemized list. It calculates total costs, identifies budget deltas, and surfaces the Verification Agent's "closest match" warnings as user-facing caveats.
+4. **Compiler Agent (LlmAgent | No Tools)**: The final aggregator. It receives the verified list and computes the overall budget (including estimated tax and shipping). Crucially, it identifies items that could not be sourced or were substituted, synthesising this into a "caveats" list. It also generates a fully self-contained "Build Guide Prompt" combining the user's initial description with the exact verified parts list and caveats, empowering the user to paste this prompt directly into another LLM to get a customized, step-by-step construction guide.
 
 ## 3. Tool Integration via Model Context Protocol (MCP)
 
@@ -64,7 +63,7 @@ The UI is a sleek, modern React application. It visually tracks the progress of 
 ## 5. Safety, Security, and Cost Control
 
 Building agents that autonomously query paid APIs requires strict guardrails:
-- **Cost Caps:** The agent prompt logic is structured to enforce a strict sequential fallback (Home Depot first, Amazon only if necessary). This caps the absolute worst-case SerpApi call volume at 36 calls per run, keeping the application well within budget.
+- **Cost Caps:** The agent prompt logic is structured to enforce a strict sequential fallback (Home Depot first, Amazon second, eBay only if necessary). This caps the absolute worst-case SerpApi call volume at 24 calls per run, ensuring predictable API consumption.
 - **Input Sanitization:** User inputs (budget, ZIP code) are validated via strict Pydantic schemas and regex patterns before ever touching the agent context or the MCP tools, preventing prompt injection or malicious API querying.
 - **Resiliency:** Network failures and rate limits (HTTP 429) from both Gemini and SerpApi are handled transparently via custom exponential backoff wrappers within the pipeline.
 
