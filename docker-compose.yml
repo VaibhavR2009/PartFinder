@@ -1,0 +1,98 @@
+# ============================================================
+# PartFinder — Docker Compose (Local Development)
+#
+# Architecture for local dev (three services):
+#   mcp_server  — FastMCP SSE server wrapping SerpApi (port 8001)
+#   backend     — FastAPI + ADK agents (port 8000)
+#   frontend    — Vite dev server (port 5173, with HMR)
+#
+# Services are kept separate here for easier debugging:
+#   - You can restart the MCP server without restarting agents.
+#   - Agent logs and MCP logs are in separate containers.
+#
+# For Cloud Run single-container deployment, set EMBED_MCP=true
+# in the backend service and skip the mcp_server service.
+# See README.md for Cloud Run deployment instructions.
+#
+# Usage:
+#   cp .env.example .env
+#   # Fill in GOOGLE_API_KEY and SERPAPI_KEY (or set DEMO_MODE=true)
+#   docker-compose up
+# ============================================================
+
+services:
+
+  # --------------------------------------------------------
+  # MCP Server — wraps SerpApi tools via FastMCP SSE
+  # --------------------------------------------------------
+  mcp_server:
+    build:
+      context: .
+      target: python-deps   # Use the Python deps stage (no frontend needed)
+    working_dir: /app
+    volumes:
+      - ./mcp_server:/app/mcp_server
+      - ./agents:/app/agents
+      - ./api:/app/api
+    command: uvicorn mcp_server.server:mcp_app --host 0.0.0.0 --port 8001
+    environment:
+      - SERPAPI_KEY=${SERPAPI_KEY}
+      - DEMO_MODE=${DEMO_MODE:-false}
+      - MCP_SERVER_PORT=8001
+      - MAX_RESULTS_PER_SEARCH=${MAX_RESULTS_PER_SEARCH:-2}
+    ports:
+      - "8001:8001"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8001/health', timeout=5)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # --------------------------------------------------------
+  # Backend — FastAPI + ADK agent pipeline
+  # --------------------------------------------------------
+  backend:
+    build:
+      context: .
+      target: python-deps
+    working_dir: /app
+    volumes:
+      - ./agents:/app/agents
+      - ./mcp_server:/app/mcp_server
+      - ./api:/app/api
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - SERPAPI_KEY=${SERPAPI_KEY}
+      - DEMO_MODE=${DEMO_MODE:-false}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.5-flash}
+      - MCP_SERVER_URL=http://mcp_server:8001/sse
+      - MCP_SERVER_PORT=8001
+      - BACKEND_PORT=8000
+      - EMBED_MCP=false
+      - CORS_ORIGINS=http://localhost:5173,http://localhost:3000
+      - MAX_ITEMS=${MAX_ITEMS:-6}
+      - MAX_CANDIDATES=${MAX_CANDIDATES:-2}
+    ports:
+      - "8000:8000"
+    depends_on:
+      mcp_server:
+        condition: service_healthy
+
+  # --------------------------------------------------------
+  # Frontend — Vite dev server with hot module replacement
+  # --------------------------------------------------------
+  frontend:
+    image: node:20-slim
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules   # Anonymous volume for node_modules (avoids bind-mount issues)
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend

@@ -1,0 +1,168 @@
+/* ============================================================
+   InfeasibleResult.css
+   ============================================================ */
+
+.ir-wrapper {
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  text-align: center;
+}
+
+/* ── Icon ── */
+.ir-icon-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.ir-icon-ring {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: var(--color-warning-bg);
+  border: 2px solid var(--color-warning-dim);
+  box-shadow: 0 0 40px hsl(38, 92%, 50%, 0.2);
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+.ir-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 10px hsl(38, 92%, 50%, 0.5));
+}
+
+/* ── Headline ── */
+.ir-headline {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-black);
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+}
+
+.ir-lead {
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+  line-height: var(--leading-relaxed);
+  max-width: 480px;
+}
+
+/* ── Reason Card ── */
+.ir-reason-card {
+  width: 100%;
+  padding: var(--space-5);
+  text-align: left;
+  border-color: hsl(38, 60%, 25%);
+}
+
+.ir-reason-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.ir-reason-icon { font-size: 1.1rem; }
+
+.ir-reason-title {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ir-reason-text {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
+}
+
+/* ── Suggestion Card ── */
+.ir-suggestion-card {
+  width: 100%;
+  padding: var(--space-5);
+  text-align: left;
+  border-color: hsl(38, 80%, 30%);
+  background: linear-gradient(135deg, var(--color-warning-bg), hsl(38, 40%, 8%));
+  animation-delay: 150ms;
+}
+
+.ir-suggestion-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.ir-suggestion-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 6px hsl(38, 92%, 50%, 0.4));
+}
+
+.ir-suggestion-badge {
+  display: inline-block;
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-warning);
+  margin-bottom: var(--space-1);
+}
+
+.ir-suggestion-title {
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+}
+
+.ir-suggestion-text {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
+}
+
+/* ── Tips ── */
+.ir-tips {
+  width: 100%;
+  padding: var(--space-4) var(--space-5);
+  background: hsl(220, 14%, 12%);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  text-align: left;
+}
+
+.ir-tips-title {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+}
+
+.ir-tips-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ir-tips-list li {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ── Actions ── */
+.ir-actions { width: 100%; }
+
+.ir-btn-retry {
+  width: 100%;
+  font-size: var(--text-base);
+  padding: 0.875rem;
+}

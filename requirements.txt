@@ -1,0 +1,30 @@
+# ============================================================
+# PartFinder — Python Dependencies
+# ============================================================
+
+# Google Agent Development Kit (ADK)
+# No version pin — resolves to current stable at build time.
+google-adk
+
+# Google GenAI SDK (used by ADK under the hood)
+google-genai
+
+# FastAPI + async server
+fastapi
+uvicorn[standard]
+sse-starlette           # Server-Sent Events support for FastAPI
+
+# MCP server (Model Context Protocol)
+fastmcp
+
+# HTTP client for SerpApi calls (async)
+httpx
+
+# Environment variable loading
+python-dotenv
+
+# Data validation
+pydantic>=2.0
+
+# Type hints / utilities
+typing-extensions

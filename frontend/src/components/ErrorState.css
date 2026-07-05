@@ -1,0 +1,81 @@
+.error-container {
+  max-width: 560px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 3rem 2rem;
+  background: rgba(30, 35, 48, 0.7);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 20px;
+}
+
+.error-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1.5rem;
+  color: var(--danger);
+}
+
+.error-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.error-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--danger);
+  margin-bottom: 0.75rem;
+}
+
+.error-message {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.error-hints {
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.error-hints p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.error-hints ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.error-hints li {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  padding-left: 1.1rem;
+  position: relative;
+}
+
+.error-hints li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--danger);
+  font-size: 0.75rem;
+}
+
+.error-hints code {
+  font-family: 'Courier New', monospace;
+  background: rgba(239, 68, 68, 0.12);
+  padding: 0.1em 0.3em;
+  border-radius: 4px;
+  font-size: 0.82rem;
+}
