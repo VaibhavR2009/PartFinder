@@ -1,7 +1,7 @@
 # PartFinder: A Multi-Agent DIY Parts-Sourcing Assistant
 **Automating Feasibility, Sourcing, and Verification for Makers using Google ADK and MCP**
 
-**Track:** Concierge Agents Track
+**Track:** Freestyle Agents Track
 
 ---
 
@@ -14,7 +14,7 @@ Furthermore, parts availability and pricing vary wildly by region, making budget
 2. What exact parts do I need?
 3. Where can I buy them locally right now?
 
-**PartFinder** is a Concierge Agent designed to solve this. By taking a simple natural-language description, a budget, and a ZIP code, PartFinder employs a multi-agent system to break down the project, verify its feasibility, source the exact parts from local retailers, and compile a finalized, priced shopping list with caveats for any substitutions.
+**PartFinder** is a Freestyle Agent designed to solve this. By taking a simple natural-language description, a budget, and a ZIP code, PartFinder employs a multi-agent system to break down the project, verify its feasibility, source the exact parts from local retailers, and compile a finalized, priced shopping list with caveats for any substitutions.
 
 ## 2. Multi-Agent Architecture
 
@@ -69,4 +69,4 @@ Building agents that autonomously query paid APIs requires strict guardrails:
 
 ## 6. Conclusion
 
-PartFinder demonstrates the power of specialized, sequential AI agents. By dividing a complex task into discrete phases—Feasibility, Sourcing, Verification, and Compilation—the system achieves a level of accuracy and reliability that a single-prompt solution cannot match. Integrated with live MCP tools and presented through a streaming, reactive frontend, PartFinder serves as a highly capable, autonomous Concierge Agent for the DIY community.
+PartFinder demonstrates the power of specialized, sequential AI agents. By dividing a complex task into discrete phases—Feasibility, Sourcing, Verification, and Compilation—the system achieves a level of accuracy and reliability that a single-prompt solution cannot match. Integrated with live MCP tools and presented through a streaming, reactive frontend, PartFinder serves as a highly capable, autonomous Freestyle Agent for the DIY community.

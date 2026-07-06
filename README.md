@@ -2,7 +2,7 @@
 
 **A multi-agent DIY parts-sourcing assistant powered by Google ADK + MCP**
 
-> Kaggle 5-Day AI Agents Intensive — Capstone Project | **Concierge Agents Track**
+> Kaggle 5-Day AI Agents Intensive — Capstone Project | **Freestyle Agents Track**
 
 PartFinder helps DIY builders find the right parts and materials for their projects. Give it a project description, a budget, your ZIP code, and your skill level — it will check feasibility, search Home Depot, verify product specs against your requirements, and return a priced, caveated parts list. No more guessing whether that 2×4 is the right grade, or whether your budget is realistic before you drive to the store.
 
@@ -22,7 +22,7 @@ PartFinder answers all three before any screws are purchased.
 
 ## The Solution
 
-PartFinder acts as your personal DIY concierge by taking a simple, natural language description of what you want to build and automatically:
+PartFinder acts as your personal DIY freestyle assistant by taking a simple, natural language description of what you want to build and automatically:
 1. **Validating Feasibility:** Checking if your idea is structurally sound and within your budget.
 2. **Translating Requirements:** Breaking down vague ideas into a specific list of required materials and tools.
 3. **Live Sourcing:** Querying real-time retailer APIs (Home Depot and Amazon) to find the exact parts needed based on your ZIP code.
