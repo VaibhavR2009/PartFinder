@@ -15,7 +15,7 @@ directly. This separation is intentional:
 
 Transport: SSE (Server-Sent Events) on configurable port.
 When embedded in the FastAPI process for Cloud Run, it mounts as an
-ASGI sub-app at /mcp — agents connect to http://localhost:PORT/mcp/sse.
+ASGI sub-app at /mcp — agents connect to http://localhost:PORT/mcp.
 
 Security:
   • SERPAPI_KEY is loaded from environment only — never hardcoded.

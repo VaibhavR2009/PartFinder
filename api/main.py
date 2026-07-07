@@ -20,7 +20,7 @@ Each SSE event is a JSON-serialized ProgressEvent:
 == Deployment Note ==
 For Cloud Run single-container deployment, the MCP server (FastMCP) is
 mounted as an ASGI sub-application at /mcp. This means agents can reach
-the MCP server at http://localhost:{PORT}/mcp/sse without a second
+the MCP server at http://localhost:{PORT}/mcp without a second
 container. See README.md "Cloud Run Deployment" section.
 
 For local development, run the MCP server separately (see docker-compose.yml).

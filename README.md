@@ -290,7 +290,7 @@ gcloud run deploy partfinder \
   --concurrency 10
 ```
 
-> **Note**: With `EMBED_MCP=true`, the MCP server runs as an in-process ASGI sub-application mounted at `/mcp`. Agents connect to it at `http://localhost:8000/mcp/sse`. No second Cloud Run service is needed.
+> **Note**: With `EMBED_MCP=true`, the MCP server runs as an in-process ASGI sub-application mounted at `/mcp`. Agents connect to it at `http://localhost:8000/mcp`. No second Cloud Run service is needed.
 
 > **Deployment mode vs. local dev**: `docker-compose.yml` runs three separate services for local development clarity. The Dockerfile / Cloud Run deployment folds them into one container for simplicity. Both approaches use the same code — only `EMBED_MCP` and environment variables differ.
 

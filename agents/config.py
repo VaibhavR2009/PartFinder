@@ -36,7 +36,7 @@ GOOGLE_API_KEY: str = os.environ.get("GOOGLE_API_KEY", "")
 #
 # Local dev: the MCP server runs as a separate process on port 8001.
 # Cloud Run / single-container: the MCP server is embedded in the
-# FastAPI process and reachable at http://localhost:PORT/mcp/sse.
+# FastAPI process and reachable at http://localhost:PORT/mcp.
 # ------------------------------------------------------------------
 MCP_SERVER_PORT: int = int(os.environ.get("MCP_SERVER_PORT", "8001"))
 MCP_SERVER_URL: str = os.environ.get(
