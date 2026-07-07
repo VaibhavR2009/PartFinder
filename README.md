@@ -119,7 +119,7 @@ graph TD
 | Criterion | Where in Code |
 |---|---|
 | **Multi-agent system (ADK)** | `agents/orchestrator.py` — four `LlmAgent` instances coordinated by `run_pipeline()` |
-| **MCP Server** | `mcp_server/server.py` — `FastMCP` with 4 tools; agents connect via `MCPToolset` + SSE |
+| **MCP Server** | `mcp_server/server.py` — `FastMCP` with 6 tools; agents connect via `MCPToolset` + SSE |
 | **Antigravity** | Frontend built and documented for Antigravity demo; streaming SSE shows live agent flow |
 | **Security features** | `api/security.py`, `api/models.py` (validators), `agents/config.py` (caps), env-only secrets |
 | **Deployability** | `Dockerfile` (multi-stage), `docker-compose.yml`, Cloud Run instructions below |

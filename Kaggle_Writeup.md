@@ -41,7 +41,7 @@ The core of PartFinder is built using the **Google Agent Development Kit (ADK)**
 To connect the ADK agents to live retail data, PartFinder implements a robust **FastMCP** server utilizing the Server-Sent Events (SSE) transport protocol. 
 
 ### SerpApi Integration
-The MCP server exposes four discrete tools powered by SerpApi:
+The MCP server exposes six discrete tools powered by SerpApi:
 - `search_home_depot`
 - `get_home_depot_product`
 - `search_amazon`
