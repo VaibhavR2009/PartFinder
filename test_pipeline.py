@@ -1,21 +1,32 @@
+import os
+import json
 import asyncio
-import logging
 from dotenv import load_dotenv
+
 load_dotenv()
+if 'GOOGLE_API_KEY' in os.environ and 'GEMINI_API_KEY' not in os.environ:
+    os.environ['GEMINI_API_KEY'] = os.environ['GOOGLE_API_KEY']
+
 from agents.orchestrator import run_pipeline
+from api.models import ProjectRequest
 
-logging.basicConfig(level=logging.INFO)
+req = {
+  'description': 'Build a wooden planter box.',
+  'budget_usd': 50,
+  'zip_code': '90210',
+  'skill_level': 'beginner',
+  'tools_on_hand': ['drill']
+}
 
-async def test():
-    project_input = {
-        "budget_usd": 300,
-        "zip_code": "08889",
-        "description": "A robotic monitor arm that can be used (we have a 3d printer) and moves based on the location of the user. We have an arduino and a monitor to use. we are using google mediapipe to detect the user.",
-        "skill_level": "intermediate",
-        "tools_on_hand": []
-    }
-    async for event in run_pipeline(project_input):
-        print(f"PIPELINE EVENT: {event}")
+async def run():
+    async for event in run_pipeline(req):
+        if event.get('stage') == 'complete':
+            data = event.get('data', {})
+            print('--- COMPLETED ---')
+            print(json.dumps(data, indent=2))
+        elif event.get('stage') in ['feasibility', 'sourcing', 'verification']:
+            print(f"--- {event.get('stage').upper()} ---")
+            print(json.dumps(event.get('data', {}), indent=2))
 
 if __name__ == "__main__":
-    asyncio.run(test())
+    asyncio.run(run())
